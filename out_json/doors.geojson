@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [700.0, 600.0]}, "properties": {"id": "F1_C", "floor_id": "F1", "type": "door", "name": "door 1101"}}, {"type": "Feature", "geometry": {"type": "Point", "coordinates": [300.0, 240.0]}, "properties": {"id": "F2_C", "floor_id": "F2", "type": "door", "name": "door 2205"}}]}
