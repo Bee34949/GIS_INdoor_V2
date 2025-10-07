@@ -1,0 +1,669 @@
+{
+  "nodes": {
+    "N144": {
+      "x": 2376.0,
+      "y": 711.0,
+      "name": "ห้องบรรยาย 2507 (2)",
+      "type": "room",
+      "floor": 5
+    },
+    "N145": {
+      "x": 2376.0,
+      "y": 974.0,
+      "name": "ห้องบรรยาย 2507 (1)",
+      "type": "room",
+      "floor": 5
+    },
+    "N146": {
+      "x": 2373.0,
+      "y": 1171.0,
+      "name": "ห้องMATHSTAT LEARNING CENTER",
+      "type": "room",
+      "floor": 5
+    },
+    "N147": {
+      "x": 2001.0,
+      "y": 1046.0,
+      "name": "ห้องบรรยาย 2503",
+      "type": "room",
+      "floor": 5
+    },
+    "N148": {
+      "x": 1998.0,
+      "y": 908.0,
+      "name": "ห้องบรรยาย 2504",
+      "type": "room",
+      "floor": 5
+    },
+    "N149": {
+      "x": 2001.0,
+      "y": 702.0,
+      "name": "ห้องบรรยาย 2506",
+      "type": "room",
+      "floor": 5
+    },
+    "N150": {
+      "x": 1904.0,
+      "y": 1261.0,
+      "name": "ห้องน้ำหญิง",
+      "type": "room",
+      "floor": 5
+    },
+    "N151": {
+      "x": 1573.0,
+      "y": 1271.0,
+      "name": "ห้องน้ำชาย",
+      "type": "room",
+      "floor": 5
+    },
+    "N152": {
+      "x": 1744.0,
+      "y": 996.0,
+      "name": "ห้องเรียน Lab4",
+      "type": "room",
+      "floor": 5
+    },
+    "N153": {
+      "x": 1744.0,
+      "y": 818.0,
+      "name": "ห้องเตรียม Lab2",
+      "type": "room",
+      "floor": 5
+    },
+    "N154": {
+      "x": 1751.0,
+      "y": 674.0,
+      "name": "ห้องปฏิบัติการ Lab3",
+      "type": "room",
+      "floor": 5
+    },
+    "N155": {
+      "x": 1607.0,
+      "y": 646.0,
+      "name": "ห้องสมุดสาขาวิชา",
+      "type": "room",
+      "floor": 5
+    },
+    "N156": {
+      "x": 1469.0,
+      "y": 668.0,
+      "name": "ห้องปฏิบัติการ Lab2",
+      "type": "room",
+      "floor": 5
+    },
+    "N157": {
+      "x": 1472.0,
+      "y": 814.0,
+      "name": "ห้องเตรียม Lab1",
+      "type": "room",
+      "floor": 5
+    },
+    "N158": {
+      "x": 1472.0,
+      "y": 999.0,
+      "name": "ห้องพักอาจารย์",
+      "type": "room",
+      "floor": 5
+    },
+    "N159": {
+      "x": 1188.0,
+      "y": 1049.0,
+      "name": "ห้องสำนักงาน 2501",
+      "type": "room",
+      "floor": 5
+    },
+    "N160": {
+      "x": 1054.0,
+      "y": 636.0,
+      "name": "ห้องประชุมสาขาวิชา",
+      "type": "room",
+      "floor": 5
+    },
+    "N161": {
+      "x": 1435.0,
+      "y": 1271.0,
+      "name": "ลิฟท์ ชั้น 5",
+      "type": "elevator",
+      "floor": 5
+    },
+    "N162": {
+      "x": 2063.0,
+      "y": 1261.0,
+      "name": "บันไดกลาง",
+      "type": "stair",
+      "floor": 5
+    },
+    "N163": {
+      "x": 2194.0,
+      "y": 621.0,
+      "name": "บันไดขวา",
+      "type": "stair",
+      "floor": 5
+    },
+    "N164": {
+      "x": 1310.0,
+      "y": 686.0,
+      "name": "บันไดซ้าย",
+      "type": "stair",
+      "floor": 5
+    },
+    "N165": {
+      "x": 2144.0,
+      "y": 733.0,
+      "name": "Door N165",
+      "type": "door",
+      "floor": 5
+    },
+    "N166": {
+      "x": 2235.0,
+      "y": 736.0,
+      "name": "Door N166",
+      "type": "door",
+      "floor": 5
+    },
+    "N167": {
+      "x": 2141.0,
+      "y": 946.0,
+      "name": "Door N167",
+      "type": "door",
+      "floor": 5
+    },
+    "N168": {
+      "x": 2238.0,
+      "y": 943.0,
+      "name": "Door N168",
+      "type": "door",
+      "floor": 5
+    },
+    "N169": {
+      "x": 2138.0,
+      "y": 1005.0,
+      "name": "Door N169",
+      "type": "door",
+      "floor": 5
+    },
+    "N170": {
+      "x": 2238.0,
+      "y": 1130.0,
+      "name": "Door N170",
+      "type": "door",
+      "floor": 5
+    },
+    "N171": {
+      "x": 2019.0,
+      "y": 1218.0,
+      "name": "Door N171",
+      "type": "door",
+      "floor": 5
+    },
+    "N172": {
+      "x": 1982.0,
+      "y": 1221.0,
+      "name": "Door N172",
+      "type": "door",
+      "floor": 5
+    },
+    "N173": {
+      "x": 1523.0,
+      "y": 1224.0,
+      "name": "Door N173",
+      "type": "door",
+      "floor": 5
+    },
+    "N174": {
+      "x": 1435.0,
+      "y": 1224.0,
+      "name": "Door N174",
+      "type": "door",
+      "floor": 5
+    },
+    "N175": {
+      "x": 1366.0,
+      "y": 1005.0,
+      "name": "Door N175",
+      "type": "door",
+      "floor": 5
+    },
+    "N176": {
+      "x": 1610.0,
+      "y": 1121.0,
+      "name": "Door N176",
+      "type": "door",
+      "floor": 5
+    },
+    "N177": {
+      "x": 1635.0,
+      "y": 886.0,
+      "name": "Door N177",
+      "type": "door",
+      "floor": 5
+    },
+    "N178": {
+      "x": 1585.0,
+      "y": 799.0,
+      "name": "Door N178",
+      "type": "door",
+      "floor": 5
+    },
+    "N179": {
+      "x": 1635.0,
+      "y": 799.0,
+      "name": "Door N179",
+      "type": "door",
+      "floor": 5
+    },
+    "N180": {
+      "x": 1607.0,
+      "y": 861.0,
+      "name": "Door N180",
+      "type": "door",
+      "floor": 5
+    },
+    "N181": {
+      "x": 1582.0,
+      "y": 749.0,
+      "name": "Door N181",
+      "type": "door",
+      "floor": 5
+    },
+    "N182": {
+      "x": 1635.0,
+      "y": 752.0,
+      "name": "Door N182",
+      "type": "door",
+      "floor": 5
+    },
+    "N183": {
+      "x": 1623.0,
+      "y": 708.0,
+      "name": "Door N183",
+      "type": "door",
+      "floor": 5
+    },
+    "N184": {
+      "x": 1129.0,
+      "y": 739.0,
+      "name": "Door N184",
+      "type": "door",
+      "floor": 5
+    },
+    "N185": {
+      "x": 1060.0,
+      "y": 711.0,
+      "name": "Door N185",
+      "type": "door",
+      "floor": 5
+    },
+    "N186": {
+      "x": 1266.0,
+      "y": 1136.0,
+      "name": "Door N186",
+      "type": "door",
+      "floor": 5
+    },
+    "N464": {
+      "x": 1313.0,
+      "y": 743.0,
+      "name": "corr N464",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N465": {
+      "x": 1313.0,
+      "y": 1168.0,
+      "name": "corr N465",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N466": {
+      "x": 1313.0,
+      "y": 793.0,
+      "name": "corr N466",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N467": {
+      "x": 1313.0,
+      "y": 843.0,
+      "name": "corr N467",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N468": {
+      "x": 1313.0,
+      "y": 893.0,
+      "name": "corr N468",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N469": {
+      "x": 1313.0,
+      "y": 943.0,
+      "name": "corr N469",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N470": {
+      "x": 1313.0,
+      "y": 993.0,
+      "name": "corr N470",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N471": {
+      "x": 1313.0,
+      "y": 1043.0,
+      "name": "corr N471",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N472": {
+      "x": 1313.0,
+      "y": 1093.0,
+      "name": "corr N472",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N473": {
+      "x": 2188.0,
+      "y": 1171.0,
+      "name": "corr N473",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N474": {
+      "x": 1363.0,
+      "y": 1168.0,
+      "name": "corr N474",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N475": {
+      "x": 1413.0,
+      "y": 1168.0,
+      "name": "corr N475",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N476": {
+      "x": 1463.0,
+      "y": 1169.0,
+      "name": "corr N476",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N477": {
+      "x": 1513.0,
+      "y": 1169.0,
+      "name": "corr N477",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N478": {
+      "x": 1563.0,
+      "y": 1169.0,
+      "name": "corr N478",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N479": {
+      "x": 1613.0,
+      "y": 1169.0,
+      "name": "corr N479",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N480": {
+      "x": 1663.0,
+      "y": 1169.0,
+      "name": "corr N480",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N481": {
+      "x": 1713.0,
+      "y": 1169.0,
+      "name": "corr N481",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N482": {
+      "x": 1763.0,
+      "y": 1170.0,
+      "name": "corr N482",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N483": {
+      "x": 1813.0,
+      "y": 1170.0,
+      "name": "corr N483",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N484": {
+      "x": 1863.0,
+      "y": 1170.0,
+      "name": "corr N484",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N485": {
+      "x": 1913.0,
+      "y": 1170.0,
+      "name": "corr N485",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N486": {
+      "x": 1963.0,
+      "y": 1170.0,
+      "name": "corr N486",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N487": {
+      "x": 2013.0,
+      "y": 1170.0,
+      "name": "corr N487",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N488": {
+      "x": 2063.0,
+      "y": 1171.0,
+      "name": "corr N488",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N489": {
+      "x": 2113.0,
+      "y": 1171.0,
+      "name": "corr N489",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N490": {
+      "x": 2188.0,
+      "y": 684.0,
+      "name": "corr N490",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N491": {
+      "x": 2188.0,
+      "y": 1121.0,
+      "name": "corr N491",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N492": {
+      "x": 2188.0,
+      "y": 1071.0,
+      "name": "corr N492",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N493": {
+      "x": 2188.0,
+      "y": 1021.0,
+      "name": "corr N493",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N494": {
+      "x": 2188.0,
+      "y": 971.0,
+      "name": "corr N494",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N495": {
+      "x": 2188.0,
+      "y": 921.0,
+      "name": "corr N495",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N496": {
+      "x": 2188.0,
+      "y": 871.0,
+      "name": "corr N496",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N497": {
+      "x": 2188.0,
+      "y": 821.0,
+      "name": "corr N497",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N498": {
+      "x": 2188.0,
+      "y": 771.0,
+      "name": "corr N498",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N499": {
+      "x": 1613.0,
+      "y": 728.0,
+      "name": "corr N499",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N500": {
+      "x": 1613.0,
+      "y": 1069.0,
+      "name": "corr N500",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N501": {
+      "x": 1613.0,
+      "y": 1019.0,
+      "name": "corr N501",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N502": {
+      "x": 1613.0,
+      "y": 969.0,
+      "name": "corr N502",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N503": {
+      "x": 1613.0,
+      "y": 919.0,
+      "name": "corr N503",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N504": {
+      "x": 1613.0,
+      "y": 819.0,
+      "name": "corr N504",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N505": {
+      "x": 1313.0,
+      "y": 1134.0,
+      "name": "corr N505",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N506": {
+      "x": 1110.0,
+      "y": 1134.0,
+      "name": "corr N506",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N507": {
+      "x": 1213.0,
+      "y": 1134.0,
+      "name": "corr N507",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N508": {
+      "x": 1163.0,
+      "y": 1134.0,
+      "name": "corr N508",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N509": {
+      "x": 1116.0,
+      "y": 1053.0,
+      "name": "corr N509",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N510": {
+      "x": 1163.0,
+      "y": 1018.0,
+      "name": "corr N510",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N511": {
+      "x": 1163.0,
+      "y": 743.0,
+      "name": "corr N511",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N512": {
+      "x": 1163.0,
+      "y": 968.0,
+      "name": "corr N512",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N513": {
+      "x": 1163.0,
+      "y": 918.0,
+      "name": "corr N513",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N514": {
+      "x": 1163.0,
+      "y": 868.0,
+      "name": "corr N514",
+      "type": "corridor",
+      "floor": 5
+    },
+    "N515": {
+      "x": 1163.0,
+      "y": 818.0,
+      "name": "corr N515",
+      "type": "corridor",
+      "floor": 5
+    }
+  }
+}

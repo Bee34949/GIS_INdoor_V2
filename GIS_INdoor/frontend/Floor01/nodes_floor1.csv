@@ -1,0 +1,62 @@
+id,x,y,name,type,floor
+N187,1466.0,627.0,corr N187,corridor,1
+N188,1463.0,1157.0,corr N188,corridor,1
+N189,1466.0,677.0,corr N189,corridor,1
+N190,1465.0,727.0,corr N190,corridor,1
+N191,1465.0,777.0,corr N191,corridor,1
+N192,1465.0,827.0,corr N192,corridor,1
+N193,1465.0,877.0,corr N193,corridor,1
+N194,1464.0,927.0,corr N194,corridor,1
+N195,1464.0,977.0,corr N195,corridor,1
+N196,1464.0,1027.0,corr N196,corridor,1
+N197,1463.0,1077.0,corr N197,corridor,1
+N198,2262.0,1163.0,corr N198,corridor,1
+N199,1513.0,1157.0,corr N199,corridor,1
+N200,1563.0,1158.0,corr N200,corridor,1
+N201,1613.0,1158.0,corr N201,corridor,1
+N202,1663.0,1159.0,corr N202,corridor,1
+N203,1713.0,1159.0,corr N203,corridor,1
+N204,1763.0,1159.0,corr N204,corridor,1
+N205,1813.0,1160.0,corr N205,corridor,1
+N206,1863.0,1160.0,corr N206,corridor,1
+N207,1913.0,1160.0,corr N207,corridor,1
+N208,1963.0,1161.0,corr N208,corridor,1
+N209,2013.0,1161.0,corr N209,corridor,1
+N210,2063.0,1162.0,corr N210,corridor,1
+N211,2113.0,1162.0,corr N211,corridor,1
+N212,2163.0,1162.0,corr N212,corridor,1
+N213,2264.0,621.0,corr N213,corridor,1
+N214,2262.0,1113.0,corr N214,corridor,1
+N215,2262.0,1063.0,corr N215,corridor,1
+N216,2263.0,1013.0,corr N216,corridor,1
+N217,2263.0,963.0,corr N217,corridor,1
+N218,2263.0,913.0,corr N218,corridor,1
+N219,2263.0,863.0,corr N219,corridor,1
+N220,2263.0,813.0,corr N220,corridor,1
+N221,2263.0,763.0,corr N221,corridor,1
+N222,2264.0,713.0,corr N222,corridor,1
+N223,1171.0,1160.0,corr N223,corridor,1
+N224,1221.0,1159.0,corr N224,corridor,1
+N225,1271.0,1159.0,corr N225,corridor,1
+N226,1321.0,1158.0,corr N226,corridor,1
+N227,1371.0,1158.0,corr N227,corridor,1
+N228,2541.0,1162.0,corr N228,corridor,1
+N229,2312.0,1163.0,corr N229,corridor,1
+N230,2362.0,1163.0,corr N230,corridor,1
+N231,2412.0,1162.0,corr N231,corridor,1
+N232,2462.0,1162.0,corr N232,corridor,1
+N233,2307.0,923.0,ประตูที่ 1 2105,door,1
+N234,2313.0,797.0,ประตูที่ 2 2105,door,1
+N235,2391.0,1119.0,ประตู 2106,door,1
+N236,1810.0,993.0,ประตู Co Working Space,door,1
+N237,2108.0,1208.0,บันไดกลาง,stair_mid,1
+N238,2076.0,1210.0,ประตูห้องน้ำหญิง,door,1
+N239,1651.0,1211.0,ประตูห้องน้ำชาย,door,1
+N240,1574.0,1226.0,ลิฟท์,elevator,1
+N241,1420.0,888.0,ประตูศูนย์เรียนรู้,door,1
+N242,1515.0,697.0,ประตูห้องน้ำหญิง (2),door,1
+N243,1573.0,726.0,ประตูห้องน้ำชาย (2),door,1
+N244,2283.0,751.0,บันไดขวา,stair_right,1
+N245,1484.0,692.0,บันไดซ้าย,stair_left,1
+N246,2563.0,1163.0,ประตูหน้า,door,1
+N247,1156.0,1160.0,ประตูหลัง,door,1

@@ -1,0 +1,22 @@
+<!-- frontend/index.html -->
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <title>Indoor Map</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow p-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Indoor Map</h1>
+      <nav class="space-x-4">
+        <button onclick="navigate('home')" class="hover:underline">Home</button>
+        <button onclick="navigate('map')" class="hover:underline">Map</button>
+        <button onclick="navigate('search')" class="hover:underline">Search</button>
+      </nav>
+    </header>
+    <main id="app" class="p-6"></main>
+    <script src="app.js"></script>
+  </body>
+</html>

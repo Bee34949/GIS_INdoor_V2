@@ -1,0 +1,431 @@
+{
+  "nodes": {
+    "N187": {
+      "x": 1466.0,
+      "y": 627.0,
+      "name": "corr N187",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N188": {
+      "x": 1463.0,
+      "y": 1157.0,
+      "name": "corr N188",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N189": {
+      "x": 1466.0,
+      "y": 677.0,
+      "name": "corr N189",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N190": {
+      "x": 1465.0,
+      "y": 727.0,
+      "name": "corr N190",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N191": {
+      "x": 1465.0,
+      "y": 777.0,
+      "name": "corr N191",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N192": {
+      "x": 1465.0,
+      "y": 827.0,
+      "name": "corr N192",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N193": {
+      "x": 1465.0,
+      "y": 877.0,
+      "name": "corr N193",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N194": {
+      "x": 1464.0,
+      "y": 927.0,
+      "name": "corr N194",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N195": {
+      "x": 1464.0,
+      "y": 977.0,
+      "name": "corr N195",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N196": {
+      "x": 1464.0,
+      "y": 1027.0,
+      "name": "corr N196",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N197": {
+      "x": 1463.0,
+      "y": 1077.0,
+      "name": "corr N197",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N198": {
+      "x": 2262.0,
+      "y": 1163.0,
+      "name": "corr N198",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N199": {
+      "x": 1513.0,
+      "y": 1157.0,
+      "name": "corr N199",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N200": {
+      "x": 1563.0,
+      "y": 1158.0,
+      "name": "corr N200",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N201": {
+      "x": 1613.0,
+      "y": 1158.0,
+      "name": "corr N201",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N202": {
+      "x": 1663.0,
+      "y": 1159.0,
+      "name": "corr N202",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N203": {
+      "x": 1713.0,
+      "y": 1159.0,
+      "name": "corr N203",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N204": {
+      "x": 1763.0,
+      "y": 1159.0,
+      "name": "corr N204",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N205": {
+      "x": 1813.0,
+      "y": 1160.0,
+      "name": "corr N205",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N206": {
+      "x": 1863.0,
+      "y": 1160.0,
+      "name": "corr N206",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N207": {
+      "x": 1913.0,
+      "y": 1160.0,
+      "name": "corr N207",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N208": {
+      "x": 1963.0,
+      "y": 1161.0,
+      "name": "corr N208",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N209": {
+      "x": 2013.0,
+      "y": 1161.0,
+      "name": "corr N209",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N210": {
+      "x": 2063.0,
+      "y": 1162.0,
+      "name": "corr N210",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N211": {
+      "x": 2113.0,
+      "y": 1162.0,
+      "name": "corr N211",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N212": {
+      "x": 2163.0,
+      "y": 1162.0,
+      "name": "corr N212",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N213": {
+      "x": 2264.0,
+      "y": 621.0,
+      "name": "corr N213",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N214": {
+      "x": 2262.0,
+      "y": 1113.0,
+      "name": "corr N214",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N215": {
+      "x": 2262.0,
+      "y": 1063.0,
+      "name": "corr N215",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N216": {
+      "x": 2263.0,
+      "y": 1013.0,
+      "name": "corr N216",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N217": {
+      "x": 2263.0,
+      "y": 963.0,
+      "name": "corr N217",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N218": {
+      "x": 2263.0,
+      "y": 913.0,
+      "name": "corr N218",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N219": {
+      "x": 2263.0,
+      "y": 863.0,
+      "name": "corr N219",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N220": {
+      "x": 2263.0,
+      "y": 813.0,
+      "name": "corr N220",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N221": {
+      "x": 2263.0,
+      "y": 763.0,
+      "name": "corr N221",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N222": {
+      "x": 2264.0,
+      "y": 713.0,
+      "name": "corr N222",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N223": {
+      "x": 1171.0,
+      "y": 1160.0,
+      "name": "corr N223",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N224": {
+      "x": 1221.0,
+      "y": 1159.0,
+      "name": "corr N224",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N225": {
+      "x": 1271.0,
+      "y": 1159.0,
+      "name": "corr N225",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N226": {
+      "x": 1321.0,
+      "y": 1158.0,
+      "name": "corr N226",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N227": {
+      "x": 1371.0,
+      "y": 1158.0,
+      "name": "corr N227",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N228": {
+      "x": 2541.0,
+      "y": 1162.0,
+      "name": "corr N228",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N229": {
+      "x": 2312.0,
+      "y": 1163.0,
+      "name": "corr N229",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N230": {
+      "x": 2362.0,
+      "y": 1163.0,
+      "name": "corr N230",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N231": {
+      "x": 2412.0,
+      "y": 1162.0,
+      "name": "corr N231",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N232": {
+      "x": 2462.0,
+      "y": 1162.0,
+      "name": "corr N232",
+      "type": "corridor",
+      "floor": 1
+    },
+    "N233": {
+      "x": 2307.0,
+      "y": 923.0,
+      "name": "ประตูที่ 1 2105",
+      "type": "door",
+      "floor": 1
+    },
+    "N234": {
+      "x": 2313.0,
+      "y": 797.0,
+      "name": "ประตูที่ 2 2105",
+      "type": "door",
+      "floor": 1
+    },
+    "N235": {
+      "x": 2391.0,
+      "y": 1119.0,
+      "name": "ประตู 2106",
+      "type": "door",
+      "floor": 1
+    },
+    "N236": {
+      "x": 1810.0,
+      "y": 993.0,
+      "name": "ประตู Co Working Space",
+      "type": "door",
+      "floor": 1
+    },
+    "N237": {
+      "x": 2108.0,
+      "y": 1208.0,
+      "name": "บันไดกลาง",
+      "type": "stair_mid",
+      "floor": 1
+    },
+    "N238": {
+      "x": 2076.0,
+      "y": 1210.0,
+      "name": "ประตูห้องน้ำหญิง",
+      "type": "door",
+      "floor": 1
+    },
+    "N239": {
+      "x": 1651.0,
+      "y": 1211.0,
+      "name": "ประตูห้องน้ำชาย",
+      "type": "door",
+      "floor": 1
+    },
+    "N240": {
+      "x": 1574.0,
+      "y": 1226.0,
+      "name": "ลิฟท์",
+      "type": "elevator",
+      "floor": 1
+    },
+    "N241": {
+      "x": 1420.0,
+      "y": 888.0,
+      "name": "ประตูศูนย์เรียนรู้",
+      "type": "door",
+      "floor": 1
+    },
+    "N242": {
+      "x": 1515.0,
+      "y": 697.0,
+      "name": "ประตูห้องน้ำหญิง (2)",
+      "type": "door",
+      "floor": 1
+    },
+    "N243": {
+      "x": 1573.0,
+      "y": 726.0,
+      "name": "ประตูห้องน้ำชาย (2)",
+      "type": "door",
+      "floor": 1
+    },
+    "N244": {
+      "x": 2283.0,
+      "y": 751.0,
+      "name": "บันไดขวา",
+      "type": "stair_right",
+      "floor": 1
+    },
+    "N245": {
+      "x": 1484.0,
+      "y": 692.0,
+      "name": "บันไดซ้าย",
+      "type": "stair_left",
+      "floor": 1
+    },
+    "N246": {
+      "x": 2563.0,
+      "y": 1163.0,
+      "name": "ประตูหน้า",
+      "type": "door",
+      "floor": 1
+    },
+    "N247": {
+      "x": 1156.0,
+      "y": 1160.0,
+      "name": "ประตูหลัง",
+      "type": "door",
+      "floor": 1
+    }
+  }
+}
