@@ -1,0 +1,122 @@
+﻿<!-- path: web/viewer.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Indoor Debug Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet"/>
+  <style>
+    html,body,#map{height:100%;margin:0}
+    .ui{position:absolute;top:10px;left:10px;background:#fff;padding:8px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15);font:12px system-ui}
+    .ui button{margin-right:6px}
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="ui">
+  <button id="btnReset">Reset view</button>
+  <button id="btnSwapped">Use swapped</button>
+  <span id="info"></span>
+</div>
+
+<script defer src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
+<script defer>
+window.addEventListener('DOMContentLoaded', async () => {
+  const URL_MAIN   = '../dist/indoor_all.recentered.geojson';
+  const URL_SWAP   = '../dist/indoor_all.recentered.swapped.geojson';
+  const URL_BBOX   = '../dist/debug_bbox.geojson';
+  const URL_POINT  = '../dist/debug_centroid.geojson';
+
+  const map = new maplibregl.Map({
+    container:'map',
+    style:{version:8, sources:{}, layers:[{id:'bg', type:'background', paint:{'background-color':'#f5f6f7'}}]},
+    center:[100.531,13.736], zoom:16
+  });
+
+  async function fetchJSON(u){ const r=await fetch(u, {cache:'no-cache'}); if(!r.ok) throw new Error(u+': '+r.status); return r.json(); }
+
+  function bbox(feats){
+    let minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
+    function walk(c){
+      if(Array.isArray(c)){
+        if(c.length>=2 && Number.isFinite(c[0]) && Number.isFinite(c[1])){
+          const [x,y]=c; if(x<minx)minx=x; if(y<miny)miny=y; if(x>maxx)maxx=x; if(y>maxy)maxy=y;
+        }
+        for(const k of c) walk(k);
+      }
+    }
+    for(const f of (feats||[])){ const g=f && f.geometry; if(g) walk(g.coordinates); }
+    if(!Number.isFinite(minx)) return null;
+    return [[minx,miny],[maxx,maxy]];
+  }
+
+  async function loadSet(urlData){
+    const [gj, bb, pt] = await Promise.all([
+      fetchJSON(urlData),
+      fetchJSON(URL_BBOX).catch(()=>null),
+      fetchJSON(URL_POINT).catch(()=>null),
+    ]);
+    console.log('[viewer] features:', gj.features?.length ?? 0);
+    const bbCalc = bbox(gj.features);
+    console.log('[viewer] bbox (calc):', bbCalc);
+
+    // add sources
+    if (!map.getSource('data')) map.addSource('data', {type:'geojson', data: gj});
+    else map.getSource('data').setData(gj);
+
+    if (pt) {
+      if (!map.getSource('centroid')) map.addSource('centroid', {type:'geojson', data: pt});
+      else map.getSource('centroid').setData(pt);
+    }
+    if (bb) {
+      if (!map.getSource('bbox')) map.addSource('bbox', {type:'geojson', data: bb});
+      else map.getSource('bbox').setData(bb);
+    }
+
+    // layers (draw something even without filters)
+    if (!map.getLayer('all-lines')) {
+      map.addLayer({id:'all-lines', type:'line', source:'data',
+        filter:['in',['geometry-type'],['literal',['LineString','MultiLineString']]],
+        paint:{'line-width':2}});
+    }
+    if (!map.getLayer('all-fills')) {
+      map.addLayer({id:'all-fills', type:'fill', source:'data',
+        filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],
+        paint:{'fill-opacity':0.3}});
+    }
+    if (!map.getLayer('all-points')) {
+      map.addLayer({id:'all-points', type:'circle', source:'data',
+        filter:['in',['geometry-type'],['literal',['Point','MultiPoint']]],
+        paint:{'circle-radius':3}});
+    }
+    if (pt && !map.getLayer('centroid')) {
+      map.addLayer({id:'centroid', type:'circle', source:'centroid',
+        paint:{'circle-radius':6}});
+    }
+    if (bb && !map.getLayer('bbox')) {
+      map.addLayer({id:'bbox', type:'line', source:'bbox',
+        paint:{'line-width':2}});
+    }
+
+    // fit view
+    try {
+      if (bbCalc) map.fitBounds(bbCalc, {padding:40});
+      else if (bb) map.fitBounds(bbox(bb.features), {padding:40});
+    } catch(e){ console.warn('fitBounds fail', e); }
+
+    document.getElementById('info').textContent =
+      `features: ${gj.features?.length ?? 0} | bbox: ${JSON.stringify(bbCalc || 'n/a')}`;
+  }
+
+  map.on('load', () => loadSet(URL_MAIN).catch(e=>{
+    console.error(e);
+    document.getElementById('info').textContent = String(e);
+  }));
+
+  document.getElementById('btnReset').onclick = () => loadSet(URL_MAIN);
+  document.getElementById('btnSwapped').onclick = () => loadSet(URL_SWAP);
+});
+</script>
+</body>
+</html>

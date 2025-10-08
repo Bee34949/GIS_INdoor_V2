@@ -1,0 +1,16 @@
+groups:
+  wall:
+    - "(?i)^(0)$"
+    - "(?i)^BODR$"
+  door:
+    - "(?i)^DOOR$"
+  text:               # ตัวหนังสือ CAD
+    - "(?i)^TEXT2$"
+  equipment:          # อุปกรณ์ติดตั้ง
+    - "(?i)^A-EQ$"
+  hvac:               # ระบบอากาศ/air
+    - "(?i)^air$"
+  room: []            # ยังไม่มีเลเยอร์ห้องในชุดนี้ (จะสร้างด้วย polygonize แทน)
+floor_from:
+  filename_regex: "(?i)floor[-_ ]?(\\d+)|fl(\\d+)|level[-_ ]?(\\d+)"
+  layer_regex: "(?i)\\bFLOOR[-_ ]?(\\d+)\\b|\\bF(\\d+)\\b"

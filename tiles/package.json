@@ -1,0 +1,14 @@
+{
+  "name": "indoor-tiles",
+  "private": true,
+  "version": "0.1.0",
+  "devDependencies": {
+    "mapshaper": "^0.6.64",
+    "svgo": "^3.3.2",
+    "tileserver-gl-light": "^1.3.0"
+  },
+  "scripts": {
+    "build": "echo Use PowerShell: ./build_tiles.ps1",
+    "serve": "tileserver-gl-light dist/indoor.mbtiles --port 8080"
+  }
+}

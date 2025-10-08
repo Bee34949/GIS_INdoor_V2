@@ -1,0 +1,41 @@
+keywords:
+  room:
+  - room
+  - rm
+  - office
+  - lab
+  - class
+  - bath
+  - bed
+  - living
+  - ห้อง
+  wall:
+  - wall
+  - partition
+  - colour
+  - color
+  - struct
+  - column
+  - กำแพง
+  - ผนัง
+  door:
+  - door
+  - entry
+  - gate
+  - portal
+  - ทางเข้า
+  - ประตู
+  - เข้า
+colors:
+  room_fills:
+  - '#f0f0f0'
+  - '#ffffff'
+  - white
+  wall_strokes:
+  - '#000000'
+  - black
+  - '#333333'
+  door_strokes:
+  - '#ff9900'
+  - '#ffa500'
+  - orange

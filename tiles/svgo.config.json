@@ -1,0 +1,8 @@
+{
+  "multipass": true,
+  "plugins": [
+    {"name": "preset-default", "params": {"overrides": {"removeViewBox": false}}},
+    {"name": "cleanupIDs", "params": {"remove": false}},
+    {"name": "removeDimensions", "active": false}
+  ]
+}
