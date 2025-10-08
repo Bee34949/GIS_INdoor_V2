@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Indoor Preview</title>
+  <link href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css" rel="stylesheet"/>
+  <style>
+    html,body{height:100%;margin:0} #map{height:100%}
+    .floors{position:absolute;top:10px;left:10px;z-index:10;background:#fff;padding:6px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:ui-sans-serif,system-ui,Segoe UI,Arial}
+    .floors button{margin:2px 3px;padding:4px 10px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer}
+    .floors button.active{background:#111;color:#fff;border-color:#111}
+    .hint{position:absolute;bottom:10px;left:10px;background:#000;color:#fff;padding:6px 8px;border-radius:6px;opacity:.75;font-size:12px}
+  </style>
+</head>
+<body>
+<div class="floors">
+  ชั้น:
+  <button data-floor="ALL" class="active">ทุกชั้น</button>
+  <button data-floor="01">01</button>
+  <button data-floor="02">02</button>
+  <button data-floor="03">03</button>
+  <button data-floor="04">04</button>
+  <button data-floor="05">05</button>
+  <button data-floor="06">06</button>
+</div>
+<div id="map"></div>
+<div class="hint">⇧/PgUp = ชั้นถัดไป • ⇩/PgDn = ชั้นก่อนหน้า • คลิกห้องเพื่อดูชื่อ</div>
+
+<script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
+<script>
+const FLOORS = ["01","02","03","04","05","06"];
+let currentFloor = "ALL";
+
+// ===== local fallback จาก nodes_tool =====
+const NODES_LS_KEY = 'nodes_tool_data';
+let nodesFallback = [];
+try {
+  const raw = localStorage.getItem(NODES_LS_KEY);
+  if (raw) {
+    nodesFallback = JSON.parse(raw).map(n => ({
+      id: String(n.id),
+      lon: +n.lon, lat: +n.lat,
+      floor: String(n.floor || '01').padStart(2,'0'),
+      type: n.type || 'poi'
+    }));
+  }
+} catch(e){ console.warn('nodes fallback parse error', e); }
+
+const map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    // ✅ ต้องมี glyphs เมื่อมี symbol/text-field
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources: {
+      indoor: {
+        type: 'vector',
+        // ✅ กัน cache ค้าง
+        tiles: ['http://localhost:8000/dist/tiles/{z}/{x}/{y}.pbf?v=3'],
+        minzoom: 14, maxzoom: 22, scheme: 'xyz'
+      },
+      // ✅ fallback nodes จาก localStorage (ถ้ามี)
+      ...(nodesFallback.length ? {
+        nodes_fb: { type:'geojson', data:{
+          type:'FeatureCollection',
+          features: nodesFallback.map(n => ({
+            type:'Feature',
+            properties:{ id:n.id, type:n.type, floor:n.floor },
+            geometry:{ type:'Point', coordinates:[n.lon, n.lat] }
+          }))
+        }}
+      } : {})
+    },
+    layers: [
+      { id:'bg', type:'background', paint:{'background-color':'#eef2f5'} },
+
+      { id:'rooms-fill', type:'fill', source:'indoor', 'source-layer':'rooms',
+        paint:{
+          'fill-color': [
+            'match', ['to-string',['get','floor']],
+            '01', '#8dd3c7',
+            '02', '#ffffb3',
+            '03', '#bebada',
+            '04', '#fb8072',
+            '05', '#80b1d3',
+            '06', '#fdb462',
+            /* other */ '#ccebc5'
+          ],
+          'fill-opacity': 0.50
+        }
+      },
+      { id:'rooms-outline', type:'line', source:'indoor', 'source-layer':'rooms',
+        paint:{ 'line-color':'#444', 'line-width': 0.6 }
+      },
+      { id:'features-line', type:'line', source:'indoor', 'source-layer':'features',
+        paint:{'line-color':'#cc0000','line-width':1}
+      },
+      { id:'rooms-hover', type:'line', source:'indoor', 'source-layer':'rooms',
+        paint:{ 'line-color':'#111','line-width': 2 },
+        filter:['==', ['get','__hover__'], true]
+      },
+
+      // ===== nodes จาก tiles (vector)
+      { id:'nodes-circle', type:'circle', source:'indoor', 'source-layer':'nodes',
+        paint:{
+          'circle-radius': ['interpolate',['linear'],['zoom'],17,2.2,19,3.2,21,4.0],
+          'circle-color': ['match',['get','type'],
+            'door','#ff00aa','stairs','#ff8800','elevator','#0062ff','corridor','#00b894','junction','#333','poi','#6c5ce7','#6c5ce7'],
+          'circle-stroke-color':'#fff','circle-stroke-width':1
+        }
+      },
+      { id:'nodes-label', type:'symbol', source:'indoor', 'source-layer':'nodes',
+        layout:{ 'text-field':['get','id'], 'text-size':11, 'text-offset':[0,1.0] },
+        paint:{ 'text-color':'#222','text-halo-color':'#fff','text-halo-width':1 }
+      },
+
+      // ===== nodes fallback (จะถูกซ่อนอัตโนมัติถ้า tiles ใช้งานได้)
+      ...(nodesFallback.length ? [
+        { id:'nodes-circle-fb', type:'circle', source:'nodes_fb',
+          paint:{
+            'circle-radius': ['interpolate',['linear'],['zoom'],17,2.2,19,3.2,21,4.0],
+            'circle-color': ['match',['get','type'],
+              'door','#ff00aa','stairs','#ff8800','elevator','#0062ff','corridor','#00b894','junction','#333','poi','#6c5ce7','#6c5ce7'],
+            'circle-stroke-color':'#fff','circle-stroke-width':1
+          }
+        },
+        { id:'nodes-label-fb', type:'symbol', source:'nodes_fb',
+          layout:{ 'text-field':['get','id'], 'text-size':11, 'text-offset':[0,1.0] },
+          paint:{ 'text-color':'#222','text-halo-color':'#fff','text-halo-width':1 }
+        }
+      ] : [])
+    ]
+  },
+  center: [100.52952, 13.73637],
+  zoom: 19
+});
+
+// ===== Helpers =====
+function setButtonsActive(floor){
+  document.querySelectorAll('.floors button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.floor === floor);
+  });
+}
+
+// แสดง/ซ่อน fallback ตามการมีอยู่ของเลเยอร์ vector
+function toggleFallbackVisibility(){
+  const hasVectorNodes = !!map.getLayer('nodes-circle') &&
+                         map.querySourceFeatures('indoor', {sourceLayer:'nodes'}).length > 0;
+  ['nodes-circle-fb','nodes-label-fb'].forEach(id=>{
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', hasVectorNodes ? 'none' : 'visible');
+  });
+}
+
+function setFloor(floor){
+  currentFloor = floor;
+
+  const ids = ['rooms-fill','rooms-outline','features-line','rooms-label','rooms-hover',
+               'nodes-circle','nodes-label','nodes-circle-fb','nodes-label-fb']
+               .filter(id => map.getLayer(id));
+
+  const flt = (floor==='ALL') ? null : ['==',['to-string',['get','floor']], floor];
+  ids.forEach(id => {
+    // fallback layers ใช้ source geojson (มี property floor เหมือนกัน)
+    map.setFilter(id, (id.endsWith('-fb') && floor==='ALL') ? null : flt);
+  });
+
+  setButtonsActive(floor);
+  focusFloorRobust(floor);
+
+  // อัปเดตการมองเห็น fallback
+  toggleFallbackVisibility();
+}
+
+function nextFloor(dir){
+  if (currentFloor === 'ALL') { setFloor(dir>0?FLOORS[0]:FLOORS[FLOORS.length-1]); return; }
+  const i = FLOORS.indexOf(currentFloor);
+  const j = (i + dir + FLOORS.length) % FLOORS.length;
+  setFloor(FLOORS[j]);
+}
+
+// ===== UI buttons =====
+document.querySelectorAll('.floors button').forEach(b=>{
+  b.onclick = () => setFloor(b.dataset.floor);
+});
+
+// ===== Hover highlight + cursor (กันกรณีไม่มี feature.id) =====
+let hoveredId = null;
+map.on('mousemove','rooms-fill', e => {
+  map.getCanvas().style.cursor = e.features.length ? 'pointer' : '';
+  const f = e.features[0];
+  if (hoveredId !== null) {
+    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: false});
+    hoveredId = null;
+  }
+  if (f && f.id != null) {
+    hoveredId = f.id;
+    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: true});
+  }
+});
+map.on('mouseleave','rooms-fill', () => {
+  map.getCanvas().style.cursor = '';
+  if (hoveredId !== null) {
+    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: false});
+    hoveredId = null;
+  }
+});
+
+// ===== Popup on click =====
+const popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true });
+map.on('click','rooms-fill', e => {
+  if (!e.features.length) return;
+  const p = e.features[0].properties || {};
+  const name = p.name || p.room || p.label || p.id || '(no name)';
+  const floor = (p.floor!==undefined)? String(p.floor) : '?';
+  popup.setLngLat(e.lngLat).setHTML(
+    `<div style="min-width:160px">
+       <div style="font-weight:600;margin-bottom:4px">${name}</div>
+       <div>ชั้น: ${floor}</div>
+     </div>`
+  ).addTo(map);
+});
+
+// ===== Keyboard: PgUp/PgDn หรือ Arrow Up/Down =====
+window.addEventListener('keydown', (ev)=>{
+  if (ev.key === 'PageUp' || ev.key === 'ArrowUp') { ev.preventDefault(); nextFloor(+1); }
+  if (ev.key === 'PageDown' || ev.key === 'ArrowDown') { ev.preventDefault(); nextFloor(-1); }
+});
+
+// ===== Robust focus & utils (มี cache + retry) =====
+const FLOOR_BOUNDS_CACHE = {};
+function layerExists(id){ return !!map.getLayer(id); }
+function boundsFromLngLats(coords){
+  if (!coords || coords.length === 0) return null;
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  for (const [x,y] of coords) {
+    if (x < minX) minX = x; if (y < minY) minY = y;
+    if (x > maxX) maxX = x; if (y > maxY) maxY = y;
+  }
+  if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) return null;
+  const padX = (maxX - minX) * 0.03 || 0.0002;
+  const padY = (maxY - minY) * 0.03 || 0.0002;
+  return [[minX - padX, minY - padY], [maxX + padX, maxY + padY]];
+}
+function collectCoordsFromFeatures(features, out){
+  for (const f of features) {
+    const g=f && f.geometry; if (!g) continue;
+    if (g.type==='Point') out.push(g.coordinates);
+    else if (g.type==='MultiPoint') g.coordinates.forEach(pt=>out.push(pt));
+    else if (g.type==='LineString') g.coordinates.forEach(pt=>out.push(pt));
+    else if (g.type==='MultiLineString') g.coordinates.flat(1).forEach(pt=>out.push(pt));
+    else if (g.type==='Polygon') g.coordinates.flat(1).forEach(pt=>out.push(pt));
+    else if (g.type==='MultiPolygon') g.coordinates.flat(2).forEach(pt=>out.push(pt));
+  }
+}
+function focusFloorRobust(floor, attempt=0){
+  if (FLOOR_BOUNDS_CACHE[floor]){
+    map.fitBounds(FLOOR_BOUNDS_CACHE[floor], { padding:60, maxZoom:20, duration:400 });
+    return;
+  }
+  const compute = () => {
+    let coords = [];
+    // ลอง nodes จาก tiles ก่อน
+    if (layerExists('nodes-circle')){
+      const ns = map.queryRenderedFeatures({ layers:['nodes-circle'] });
+      ns.forEach(f => f.geometry && coords.push(f.geometry.coordinates));
+    }
+    // ถ้าไม่มี ลอง fallback
+    if (coords.length===0 && layerExists('nodes-circle-fb')){
+      const ns = map.queryRenderedFeatures({ layers:['nodes-circle-fb'] });
+      ns.forEach(f => f.geometry && coords.push(f.geometry.coordinates));
+    }
+    // สุดท้าย rooms/features
+    if (coords.length===0){
+      const feats = map.queryRenderedFeatures({ layers:['rooms-fill','features-line'].filter(layerExists) });
+      collectCoordsFromFeatures(feats, coords);
+    }
+    const b = boundsFromLngLats(coords);
+    if (b){ FLOOR_BOUNDS_CACHE[floor]=b; map.fitBounds(b,{padding:60,maxZoom:20,duration:400}); return true; }
+    return false;
+  };
+  if (!map.isStyleLoaded()){ map.once('idle', () => focusFloorRobust(floor, attempt)); return; }
+  requestAnimationFrame(() => {
+    const ok = compute();
+    if (!ok && attempt < 3) setTimeout(() => focusFloorRobust(floor, attempt+1), 120);
+  });
+}
+
+// ===== Init =====
+map.on('load', () => {
+  setFloor('01');
+  // ตรวจอีกครั้งหลัง tiles โหลดเพื่อซ่อน/แสดง fallback ให้ถูกต้อง
+  map.once('idle', toggleFallbackVisibility);
+});
+</script>
+</body>
+</html>

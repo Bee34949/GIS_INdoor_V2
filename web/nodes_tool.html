@@ -1,0 +1,394 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Nodes Tool (Add / Move / Delete / Corridor + Floors)</title>
+<link href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css" rel="stylesheet"/>
+<style>
+  html,body{height:100%;margin:0} #map{height:100%}
+  .toolbar{position:absolute;top:10px;left:10px;z-index:10;background:#fff;padding:8px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:ui-sans-serif,system-ui}
+  .toolbar .group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .toolbar select,.toolbar button{padding:6px 10px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer}
+  .toolbar button.tool-active{background:#111;color:#fff;border-color:#111}
+  .panel{position:absolute;top:10px;right:10px;z-index:10;background:#fff;padding:10px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:ui-sans-serif,system-ui;min-width:320px}
+  .panel input,.panel select,.panel button{margin:4px 0;padding:6px 8px}
+  .hint{position:absolute;bottom:10px;left:10px;background:#000;color:#fff;padding:6px 8px;border-radius:6px;opacity:.75;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Toolbar: Floor + Tools -->
+<div class="toolbar">
+  <div class="group">
+    <label>ชั้น:</label>
+    <select id="floor-select">
+      <option>01</option><option>02</option><option>03</option>
+      <option>04</option><option>05</option><option>06</option>
+    </select>
+    <button id="tool-select"  title="Select/Drag (S)">Select</button>
+    <button id="tool-add"     title="Add node (A)">Add</button>
+    <button id="tool-delete"  title="Delete node (D)">Delete</button>
+    <button id="tool-corridor" title="Draw corridor → nodes (C)">Corridor</button>
+  </div>
+</div>
+
+<!-- Right panel -->
+<div class="panel">
+  <div style="font-weight:700">แก้ไขโหนด</div>
+  <label>ID <input id="idInput" placeholder="เช่น N001" /></label><br/>
+  <label>Type
+    <select id="typeInput">
+      <option value="corridor">corridor</option>
+      <option value="junction">junction</option>
+      <option value="stairs">stairs</option>
+      <option value="elevator">elevator</option>
+      <option value="door">door</option>
+      <option value="poi">poi</option>
+    </select>
+  </label><br/>
+
+  <!-- Corridor options -->
+  <fieldset style="border:1px solid #eee;border-radius:8px;padding:8px">
+    <legend style="font-size:12px;color:#666">Corridor options</legend>
+    <label>Spacing (m) <input id="spacingInput" type="number" value="3" min="0.5" step="0.5" style="width:90px"/></label>
+    <label style="margin-left:8px"><input id="includeEnds" type="checkbox" checked/> รวมปลายเส้น</label>
+    <div style="margin-top:6px">
+      <button id="corridorFinish" title="จบเส้นทาง (Enter/Double click)">จบเส้นทาง</button>
+      <button id="corridorClear" title="ล้างเส้นทางที่กำลังวาด (Esc)">ล้าง</button>
+    </div>
+    <div style="font-size:12px;opacity:.7">โหมด Corridor: คลิกต่อเนื่องเพื่อวางจุดยอด, ดับเบิลคลิกหรือกด Enter เพื่อจบเส้น → ระบบจะแตกเป็นโหนดตามระยะที่กำหนด</div>
+  </fieldset>
+
+  <div style="margin-top:6px">
+    <button id="genId">Gen ID</button>
+    <button id="exportCsv">Export CSV</button>
+    <button id="exportGeoJSON">Export GeoJSON</button>
+    <input id="importCsv" type="file" accept=".csv,.geojson" />
+  </div>
+
+  <div style="font-size:12px;opacity:.7;margin-top:6px">
+    Select: ลากย้าย • Add: คลิกเพิ่ม • Delete: คลิกลบ • <b>Shift+คลิก</b> ลบจากทุกโหมด •
+    Corridor: คลิกลากเส้น → จบเส้นจะสร้างโหนดตาม spacing
+  </div>
+</div>
+
+<div id="map"></div>
+<div class="hint">S=Select • A=Add • D=Delete • C=Corridor • ชั้นซ้ายบน • Shift+คลิก=ลบ • Del=ลบที่เลือก • Enter/ดับเบิลคลิก=จบ corridor</div>
+
+<script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
+<script>
+/* ---------------- State ---------------- */
+const FLOORS=["01","02","03","04","05","06"];
+let currentFloor="01";
+let tool="select";            // select | add | delete | corridor
+let dragging=null;
+let selectedId=null;
+let corridorPts=[];           // [[lng,lat],...]
+
+const idInput   = document.getElementById('idInput');
+const typeInput = document.getElementById('typeInput');
+const spacingEl = document.getElementById('spacingInput');
+const includeEndsEl = document.getElementById('includeEnds');
+
+const keyLS='nodes_tool_data';
+let nodes = JSON.parse(localStorage.getItem(keyLS)||'[]'); // [{id,lon,lat,floor,type}]
+function saveLS(){ localStorage.setItem(keyLS, JSON.stringify(nodes)); }
+
+function genId(){
+  let n=nodes.length+1, id;
+  do { id=`N${String(n).padStart(3,'0')}`; n++; } while (nodes.some(x=>x.id===id));
+  return id;
+}
+
+/* ---------------- MapLibre ---------------- */
+const map=new maplibregl.Map({
+  container:'map',
+  style:{
+    version:8,
+    glyphs:"https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    sources:{
+      indoor:{type:'vector', tiles:['http://localhost:8000/dist/tiles/{z}/{x}/{y}.pbf'], minzoom:14, maxzoom:22},
+      nodes:{type:'geojson', data:{type:'FeatureCollection',features:[]}},
+      draw:{ type:'geojson', data:{ type:'FeatureCollection', features:[] } }
+    },
+    layers:[
+      {id:'bg',type:'background',paint:{'background-color':'#eef2f5'}},
+      {id:'rooms-fill',type:'fill',source:'indoor','source-layer':'rooms',paint:{'fill-color':'#ccebc5','fill-opacity':0.45}},
+      {id:'features-line',type:'line',source:'indoor','source-layer':'features',paint:{'line-color':'#cc0000','line-width':1}},
+      {id:'draw-line',type:'line',source:'draw',paint:{'line-color':'#1f8ef1','line-width':3,'line-dasharray':[2,2]}},
+      {id:'nodes-circle',type:'circle',source:'nodes',
+        paint:{
+          'circle-radius':3.2,
+          'circle-color':[ 'match', ['get','type'],
+            'door','#ff00aa','stairs','#ff8800','elevator','#0062ff','corridor','#00b894','junction','#333', 'poi','#6c5ce7', '#6c5ce7'],
+          'circle-stroke-color':'#fff','circle-stroke-width':1
+        }},
+      {id:'nodes-label',type:'symbol',source:'nodes',
+        layout:{'text-field':['get','id'],'text-size':11,'text-offset':[0,1.0]},
+        paint:{'text-color':'#222','text-halo-color':'#fff','text-halo-width':1}}
+    ]
+  },
+  center:[100.52952,13.73637], zoom:19
+});
+
+map.on('load', ()=>{ refreshMap(); setTool('select'); setFloor(currentFloor); });
+
+/* ---------------- Floor switching ---------------- */
+const floorSelect=document.getElementById('floor-select');
+floorSelect.value=currentFloor;
+floorSelect.addEventListener('change', ()=> setFloor(floorSelect.value));
+
+function setFloor(f){
+  currentFloor=f;
+  const flt = ['==',['to-string',['get','floor']], f];
+  ['rooms-fill','features-line','nodes-circle','nodes-label','draw-line'].forEach(id=>{
+    if (map.getLayer(id)) map.setFilter(id, id==='draw-line'? null : flt);
+  });
+  refreshMap();
+  focusFloorRobust(f);
+}
+
+/* -------- Robust focus (เหมือนที่คุยกันก่อนหน้า) -------- */
+const FLOOR_BOUNDS_CACHE = {};
+function layerExists(id){ return !!map.getLayer(id); }
+function boundsFromLngLats(coords){
+  if(!coords||!coords.length) return null;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const [x,y] of coords){ if(x<minX)minX=x; if(y<minY)minY=y; if(x>maxX)maxX=x; if(y>maxY)maxY=y; }
+  const padX=(maxX-minX)*0.03||0.0002, padY=(maxY-minY)*0.03||0.0002;
+  return [[minX-padX,minY-padY],[maxX+padX,maxY+padY]];
+}
+function collectCoordsFromFeatures(features,out){
+  for(const f of features){ const g=f.geometry; if(!g) continue;
+    if(g.type==='Point') out.push(g.coordinates);
+    else if(g.type==='MultiPoint') g.coordinates.forEach(pt=>out.push(pt));
+    else if(g.type==='LineString') g.coordinates.forEach(pt=>out.push(pt));
+    else if(g.type==='MultiLineString') g.coordinates.flat(1).forEach(pt=>out.push(pt));
+    else if(g.type==='Polygon') g.coordinates.flat(1).forEach(pt=>out.push(pt));
+    else if(g.type==='MultiPolygon') g.coordinates.flat(2).forEach(pt=>out.push(pt));
+  }
+}
+function focusFloorRobust(floor,attempt=0){
+  if(FLOOR_BOUNDS_CACHE[floor]){ map.fitBounds(FLOOR_BOUNDS_CACHE[floor],{padding:60,maxZoom:20,duration:400}); return; }
+  const compute=()=>{
+    let coords=[];
+    if(layerExists('nodes-circle')){
+      const ns=map.queryRenderedFeatures({layers:['nodes-circle']}); ns.forEach(f=>coords.push(f.geometry.coordinates));
+    }
+    if(coords.length===0){
+      const feats=map.queryRenderedFeatures({layers:['rooms-fill','features-line'].filter(layerExists)});
+      collectCoordsFromFeatures(feats,coords);
+    }
+    const b=boundsFromLngLats(coords);
+    if(b){ FLOOR_BOUNDS_CACHE[floor]=b; map.fitBounds(b,{padding:60,maxZoom:20,duration:400}); return true; }
+    return false;
+  };
+  if(!map.isStyleLoaded()){ map.once('idle',()=>focusFloorRobust(floor,attempt)); return; }
+  requestAnimationFrame(()=>{ const ok=compute(); if(!ok&&attempt<3) setTimeout(()=>focusFloorRobust(floor,attempt+1),120); });
+}
+
+/* ---------------- Tools switching ---------------- */
+function setTool(name){
+  tool=name;
+  ['tool-select','tool-add','tool-delete','tool-corridor'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.toggle('tool-active',
+      (id==='tool-select'  && name==='select') ||
+      (id==='tool-add'     && name==='add')    ||
+      (id==='tool-delete'  && name==='delete') ||
+      (id==='tool-corridor'&& name==='corridor')
+    );
+  });
+  if(tool!=='corridor') clearCorridor();
+}
+document.getElementById('tool-select').onclick = ()=>setTool('select');
+document.getElementById('tool-add').onclick    = ()=>setTool('add');
+document.getElementById('tool-delete').onclick = ()=>setTool('delete');
+document.getElementById('tool-corridor').onclick=()=>setTool('corridor');
+
+/* ---------------- Render / Refresh ---------------- */
+function refreshMap(){
+  const feats = nodes.filter(n=>String(n.floor)===currentFloor)
+    .map(n=>({type:'Feature',properties:{id:n.id,type:n.type,floor:String(n.floor)},geometry:{type:'Point',coordinates:[n.lon,n.lat]}}));
+  map.getSource('nodes').setData({type:'FeatureCollection',features:feats});
+}
+
+/* ---------------- Hit helpers ---------------- */
+function hitNodeAtEvent(e){
+  const f = map.queryRenderedFeatures(e.point, { layers:['nodes-circle'] });
+  return f && f[0] ? f[0].properties.id : null;
+}
+function getNode(id){ return nodes.find(n=>n.id===id); }
+
+/* ---------------- Map interactions ---------------- */
+map.on('click',(e)=>{
+  // Shift+Click : ลบ (ทุกโหมด)
+  if (e.originalEvent.shiftKey){
+    const id = hitNodeAtEvent(e);
+    if (id) deleteNodeById(id);
+    return;
+  }
+  if (tool==='add'){
+    const id = (idInput.value.trim() || genId());
+    const type = typeInput.value || 'poi';
+    nodes.push({id, lon:e.lngLat.lng, lat:e.lngLat.lat, floor:currentFloor, type});
+    saveLS(); refreshMap();
+  } else if (tool==='delete'){
+    const id = hitNodeAtEvent(e);
+    if (id) deleteNodeById(id);
+  } else if (tool==='select'){
+    selectedId = hitNodeAtEvent(e);
+  } else if (tool==='corridor'){
+    // เก็บจุดเส้น corridor
+    corridorPts.push([e.lngLat.lng, e.lngLat.lat]);
+    drawCorridorPreview();
+  }
+});
+
+// Drag
+map.on('mousedown','nodes-circle',(e)=>{
+  if (tool!=='select') return;
+  const id = e.features[0].properties.id;
+  selectedId = id;
+  map.getCanvas().style.cursor='grabbing';
+  dragging = { id };
+  map.on('mousemove', onDragMove);
+  map.once('mouseup', onDragEnd);
+});
+function onDragMove(e){
+  if (!dragging) return;
+  const n = getNode(dragging.id);
+  n.lon = e.lngLat.lng; n.lat = e.lngLat.lat;
+  refreshMap();
+}
+function onDragEnd(){
+  if (dragging){ saveLS(); dragging=null; }
+  map.getCanvas().style.cursor='';
+  map.off('mousemove', onDragMove);
+}
+
+// Keyboard
+window.addEventListener('keydown',(e)=>{
+  if (e.key==='s' || e.key==='S') setTool('select');
+  else if (e.key==='a' || e.key==='A') setTool('add');
+  else if (e.key==='d' || e.key==='D') setTool('delete');
+  else if (e.key==='c' || e.key==='C') setTool('corridor');
+  else if (e.key==='Delete' && selectedId){ deleteNodeById(selectedId); }
+  else if (e.key==='Enter' && tool==='corridor'){ corridorFinish(); }
+  else if (e.key==='Escape' && tool==='corridor'){ clearCorridor(); }
+});
+map.on('dblclick', (e)=>{ if (tool==='corridor'){ e.preventDefault(); corridorFinish(); } });
+
+/* ---------------- Corridor drawing → nodes ---------------- */
+document.getElementById('corridorFinish').onclick = corridorFinish;
+document.getElementById('corridorClear').onclick  = clearCorridor;
+
+function drawCorridorPreview(){
+  const feats = corridorPts.length>=2 ? [{
+    type:'Feature', properties:{},
+    geometry:{ type:'LineString', coordinates:corridorPts }
+  }] : [];
+  map.getSource('draw').setData({type:'FeatureCollection',features:feats});
+}
+
+function clearCorridor(){
+  corridorPts = [];
+  drawCorridorPreview();
+}
+
+function corridorFinish(){
+  if (corridorPts.length < 2){ alert('ลากเส้นอย่างน้อย 2 จุดก่อน'); return; }
+  const spacing = Math.max(0.25, +spacingEl.value || 3); // เมตร
+  const includeEnds = !!includeEndsEl.checked;
+  // สร้างจุดตามระยะห่างบนเส้น
+  const pts = resamplePolylineMeters(corridorPts, spacing, includeEnds);
+  const type = 'corridor'; // เส้นทางเดิน → โหนดชนิด corridor
+  for (const [lng,lat] of pts){
+    const id = genId();
+    nodes.push({id, lon:lng, lat:lat, floor:currentFloor, type});
+  }
+  saveLS(); refreshMap();
+  clearCorridor();
+  alert(`สร้างโหนด corridor จำนวน ${pts.length} จุด`);
+}
+
+// คำนวณใหม่แบบ local WebMercator (ดีพอในสเกลอาคาร)
+function resamplePolylineMeters(lnglats, spacing, includeEnds=true){
+  // แปลงเป็นพิกัดเมตรในระนาบท้องถิ่น
+  const lat0 = lnglats[0][1] * Math.PI/180;
+  const mPerDegX = 111320 * Math.cos(lat0);
+  const mPerDegY = 110540;
+  const toXY = ([lng,lat]) => [ (lng)*mPerDegX, (lat)*mPerDegY ];
+  const toLL = ([x,y]) => [ x/mPerDegX, y/mPerDegY ];
+
+  const XY = lnglats.map(toXY);
+  // ความยาวรวม
+  let L=0, segLen=[];
+  for(let i=1;i<XY.length;i++){
+    const dx=XY[i][0]-XY[i-1][0], dy=XY[i][1]-XY[i-1][1];
+    const d=Math.hypot(dx,dy); segLen.push(d); L+=d;
+  }
+  if (L===0) return includeEnds ? [lnglats[0]] : [];
+
+  // ระยะที่ต้องวาง (0..L)
+  const tPositions=[];
+  if (includeEnds) tPositions.push(0);
+  for(let d=spacing; d<L; d+=spacing) tPositions.push(d);
+  if (includeEnds) tPositions.push(L);
+
+  // เดินไปตาม segment แล้วคายจุด
+  const out=[];
+  let acc=0, i=0, x0=XY[0][0], y0=XY[0][1];
+  for(const target of tPositions){
+    while(acc + segLen[i] < target && i < segLen.length-1){
+      acc += segLen[i]; i++; x0 = XY[i][0]; y0 = XY[i][1];
+    }
+    const remain = target - acc;
+    const dx = XY[i+1][0]-XY[i][0], dy = XY[i+1][1]-XY[i][1];
+    const len = segLen[i] || 1;
+    const px = XY[i][0] + dx * (remain/len);
+    const py = XY[i][1] + dy * (remain/len);
+    out.push( toLL([px,py]) );
+  }
+  return out;
+}
+
+/* ---------------- Delete / Import / Export ---------------- */
+function deleteNodeById(id){
+  if (!confirm(`ลบโหนด ${id} บนชั้น ${currentFloor}?`)) return;
+  nodes = nodes.filter(n => !(n.id===id && String(n.floor)===currentFloor));
+  if (selectedId===id) selectedId=null;
+  saveLS(); refreshMap();
+}
+
+document.getElementById('exportCsv').onclick=()=>{
+  const rows=['id,lon,lat,floor,type', ...nodes.map(n=>`${n.id},${n.lon},${n.lat},${n.floor},${n.type||''}`)];
+  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nodes.csv'; a.click();
+};
+document.getElementById('exportGeoJSON').onclick=()=>{
+  const feats=nodes.map(n=>({type:'Feature',properties:{id:n.id,type:n.type,floor:String(n.floor)},geometry:{type:'Point',coordinates:[n.lon,n.lat]}}));
+  const blob=new Blob([JSON.stringify({type:'FeatureCollection',features:feats})],{type:'application/geo+json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='nodes.geojson'; a.click();
+};
+document.getElementById('importCsv').addEventListener('change', async ev=>{
+  const file=ev.target.files[0]; if(!file) return;
+  const text=await file.text();
+  if (file.name.endsWith('.geojson')){
+    const gj = JSON.parse(text);
+    nodes = gj.features.map(f=>({id:String(f.properties.id), lon:f.geometry.coordinates[0], lat:f.geometry.coordinates[1], floor:String(f.properties.floor||'01'), type:(f.properties.type||'poi')}));
+  } else {
+    const lines = text.split(/\r?\n/).filter(x=>x.trim());
+    const head = lines[0].toLowerCase();
+    const rows = lines.slice(1).map(l=>l.split(','));
+    if(head.includes('id')&&head.includes('lon')&&head.includes('lat')){
+      nodes = rows.map(r=>({id:r[0].trim(), lon:+r[1], lat:+r[2], floor:(r[3]||'01').trim(), type:(r[4]||'poi').trim()}));
+    } else { alert('CSV format ไม่ถูกต้อง (ต้องมี id,lon,lat,floor[,type])'); return; }
+  }
+  saveLS(); refreshMap(); alert('นำเข้าแล้ว');
+});
+
+document.getElementById('genId').onclick=()=>{ idInput.value = genId(); };
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir fastapi uvicorn "pydantic>=2"
+COPY backend_ext/pos_server.py ./backend_ext/pos_server.py
+ENV PYTHONUNBUFFERED=1
+CMD ["uvicorn","backend_ext.pos_server:app","--host","0.0.0.0","--port","9000"]

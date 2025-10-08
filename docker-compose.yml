@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - ANCHOR_LON=100.531        # ปรับตาม anchor ที่ใช้ตอน recenter
+      - ANCHOR_LAT=13.736
+      - ENABLE_SIM=1              # 0=ปิด simulator
+    ports: ["9000:9000"]
+
+  tiles:
+    image: maptiler/tileserver-gl:latest
+    command: ["-c", "/data/config.json", "-p", "8080"]
+    volumes:
+      - ./dist:/data:ro
+    ports: ["8080:8080"]
+
+  web:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports: ["80:80"]
+    depends_on: [backend, tiles]
