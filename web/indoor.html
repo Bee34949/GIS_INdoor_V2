@@ -57,7 +57,7 @@ const map = new maplibregl.Map({
         type: 'vector',
         // ✅ กัน cache ค้าง
         tiles: ['http://localhost:8000/dist/tiles/{z}/{x}/{y}.pbf?v=3'],
-        minzoom: 14, maxzoom: 22, scheme: 'xyz'
+        minzoom: 0, maxzoom: 22, scheme: 'xyz'
       },
       // ✅ fallback nodes จาก localStorage (ถ้ามี)
       ...(nodesFallback.length ? {
@@ -95,13 +95,26 @@ const map = new maplibregl.Map({
       { id:'features-line', type:'line', source:'indoor', 'source-layer':'features',
         paint:{'line-color':'#cc0000','line-width':1}
       },
-      { id:'rooms-hover', type:'line', source:'indoor', 'source-layer':'rooms',
-        paint:{ 'line-color':'#111','line-width': 2 },
-        filter:['==', ['get','__hover__'], true]
-      },
+  {
+    id: 'rooms-hover',
+    type: 'line',
+    source: 'indoor',
+    'source-layer': 'rooms',
+    paint: {
+      'line-color': '#111',
+      'line-width': 2,
+      // ใช้ feature-state ที่ paint (ถูกต้องตามสเปก)
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1,     // ถ้า hover=true → โชว์
+        0      // ถ้าไม่ใช่ → ซ่อน
+      ]
+    }
+  },
 
       // ===== nodes จาก tiles (vector)
-      { id:'nodes-circle', type:'circle', source:'indoor', 'source-layer':'nodes',
+      { id:'nodes-circle', minzoom: 12, type:'circle', source:'indoor', 'source-layer':'nodes',
         paint:{
           'circle-radius': ['interpolate',['linear'],['zoom'],17,2.2,19,3.2,21,4.0],
           'circle-color': ['match',['get','type'],
@@ -109,7 +122,7 @@ const map = new maplibregl.Map({
           'circle-stroke-color':'#fff','circle-stroke-width':1
         }
       },
-      { id:'nodes-label', type:'symbol', source:'indoor', 'source-layer':'nodes',
+      { id:'nodes-label',  minzoom: 14, type:'symbol', source:'indoor', 'source-layer':'nodes',
         layout:{ 'text-field':['get','id'], 'text-size':11, 'text-offset':[0,1.0] },
         paint:{ 'text-color':'#222','text-halo-color':'#fff','text-halo-width':1 }
       },
@@ -188,21 +201,21 @@ let hoveredId = null;
 map.on('mousemove','rooms-fill', e => {
   map.getCanvas().style.cursor = e.features.length ? 'pointer' : '';
   const f = e.features[0];
-  if (hoveredId !== null) {
-    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: false});
-    hoveredId = null;
-  }
-  if (f && f.id != null) {
-    hoveredId = f.id;
-    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: true});
-  }
-});
-map.on('mouseleave','rooms-fill', () => {
-  map.getCanvas().style.cursor = '';
-  if (hoveredId !== null) {
-    map.setFeatureState({source:'indoor', sourceLayer:'rooms', id:hoveredId}, {__hover__: false});
-    hoveredId = null;
-  }
+// ตอน mousemove บน rooms-fill
+if (hoveredId !== null) {
+  map.setFeatureState({ source:'indoor', sourceLayer:'rooms', id: hoveredId }, { hover: false });
+  hoveredId = null;
+}
+if (f && f.id != null) {
+  hoveredId = f.id;
+  map.setFeatureState({ source:'indoor', sourceLayer:'rooms', id: hoveredId }, { hover: true });
+}
+
+// ตอน mouseleave
+if (hoveredId !== null) {
+  map.setFeatureState({ source:'indoor', sourceLayer:'rooms', id: hoveredId }, { hover: false });
+  hoveredId
+}
 });
 
 // ===== Popup on click =====
